@@ -1,4 +1,7 @@
-PaypalIpnManager
-================
+# PayPal IPN Manager
 
-** TODO: Add description **
+An Elixir server that buffers PayPal IPN notifications to your business app
+
+## Status
+
+*Under construction.*
