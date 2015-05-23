@@ -1,0 +1,2 @@
+defmodule PaypalIpnManager do
+end
