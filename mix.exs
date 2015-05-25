@@ -32,8 +32,8 @@ defmodule Ipn.Mixfile do
       {:gproc, "0.3.1"},
       {:cowboy, "1.0.0"},
       {:plug, "0.10.0"},
-      {:meck, "0.8.2", only: :test},
-      {:httpoison, "0.4.3", only: :test}
+      {:meck, "0.8.2"},
+      {:httpoison, "~> 0.6.2"}
     ]
   end
 end

@@ -6,6 +6,12 @@ An Elixir server that buffers PayPal IPN notifications to your business app
 
 *Under construction.*
 
+## "Business Rules"
+
+1. Can acknowledge IPN messages in any order when PayPal has sent us a bunch.
+1. Must maintain `profile_id` sequence order of IPN messages into our application.  I.e., a profile cannot
+   receive a recurring payment IPN before the IPN that creates the payment.
+
 ## Tasks
 
 1. Read PayPal Sandbox's IPN HTTP Request

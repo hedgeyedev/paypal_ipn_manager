@@ -18,13 +18,24 @@ defmodule HttpServerTest do
   end
 
   test "http server" do
-    assert %HTTPoison.Response{body: "", status_code: 200} =
+    local_server = "http://127.0.0.1:5454"
+    params = "payment_cycle=Monthly&txn_type=recurring_payment_profile_cancel&last_name=Zezoff&next_payment_date=N/A&residence_country=US&initial_payment_amount=0.00&currency_code=USD&time_created=16%3A40%3A32+Apr+15%2C+2015+PDT&verify_sign=A0Eb8n0jOFQOYgjCpTf.GxozgHKmA0QZ0YggWetZsUaEkIWBxNzRCldB&period_type=+Regular&payer_status=unverified&tax=0.00&payer_email=zezoff%40me.com&first_name=Robert&receiver_email=merchantpayments%40hedgeye.com&payer_id=PN8KPJTC5XQYA&product_type=1&shipping=0.00&amount_per_cycle=29.95&profile_status=Cancelled&charset=windows-1252&notify_version=3.8&amount=29.95&outstanding_balance=0.00&recurring_payment_id=I-FJBKGK134RD4&product_name=Morning+Newsletter&ipn_track_id=3cf95bcb2dac8"
+    relative_url = "/payments/ipn"
+    url = "#{local_server}#{relative_url}?#{params}"
+    assert {:ok, %HTTPoison.Response{body: "", status_code: 200, body: _}} =
+      HTTPoison.post(url, "")
+
+    ack_params = "cmd=_notify-validate&#{params}"
+    assert {:ok, %HTTPoison.Response{body: "VERIFIED", status_code: 200, body: _}} =
+      HTTPoison.post("#{local_server}/fake/acknowledge?#{ack_params}", "")
+
+    assert {:ok, %HTTPoison.Response{body: "", status_code: 200, body: _}} =
       HTTPoison.get("http://127.0.0.1:5454/entries?list=test&date=20131219")
 
-    assert %HTTPoison.Response{body: "OK", status_code: 200} =
+    assert {:ok, %HTTPoison.Response{body: "OK", status_code: 200}} =
       HTTPoison.post("http://127.0.0.1:5454/add_entry?list=test&date=20131219&title=Dentist", "")
 
-    assert %HTTPoison.Response{body: "2013-12-19    Dentist", status_code: 200} =
+    assert {:ok, %HTTPoison.Response{body: "2013-12-19    Dentist", status_code: 200}} =
       HTTPoison.get("http://127.0.0.1:5454/entries?list=test&date=20131219")
   end
 

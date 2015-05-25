@@ -8,6 +8,12 @@ defmodule Ipn.Web do
     Plug.Adapters.Cowboy.http(__MODULE__, nil, port: 5454)
   end
 
+  # The PayPal IPN calls here
+  post "/payments/ipn" do
+    conn
+    |> Plug.Conn.send_resp(200, "")
+  end
+
   # curl 'http://localhost:5454/entries?list=bob&date=20131219'
   get "/entries" do
     conn
@@ -76,6 +82,17 @@ defmodule Ipn.Web do
     |> Plug.Conn.send_resp(200, conn.assigns[:response])
   end
 
+  # A fake PayPal acknowledgement server.  Until we start talking to a real PayPal server.
+  post "/fake/acknowledge" do
+    conn
+    |> Plug.Conn.put_resp_content_type("text/plain")
+    |> verified
+  end
+
+  defp verified(conn) do
+    result = Ipn.FakePaypalAck.response(conn.params)
+    Plug.Conn.send_resp(conn, 200, result)
+  end
 
   match _ do
     Plug.Conn.send_resp(conn, 404, "not found")
